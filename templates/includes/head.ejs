@@ -1,0 +1,215 @@
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title><%= siteTitle %></title>
+<meta name="description" content="<%- themeConfig.siteDescription %>" />
+<link rel="shortcut icon" href="<%= themeConfig.domain %>/favicon.ico">
+<link rel="stylesheet" href="<%= themeConfig.domain %>/styles/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css">
+
+<% if (site.customConfig.enableKaTeX !== 'false') { %>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0KOVEMeaPoAbtnPgS4evuCX/hOT/r4YYKQdJxIHA3RZ9M1L+0z4xw" crossorigin="anonymous">
+<% } %>
+<style>
+  /* 确保原来的fa类使用icomoon字体 */
+  .fa.fa-search, .fa.fa-arrow-up, .fa.fa-bars, .fa.fa-chevron-left, .fa.fa-chevron-right, .fa.fa-comment, .fa.fa-random, .fa.fa-th {
+    font-family: 'FontAwesome' !important;
+  }
+</style>
+
+<script src="<%= themeConfig.domain %>/media/js/jquery.min.js"></script>
+<script src="<%= themeConfig.domain %>/media/js/masonry.pkgd.min.js"></script>
+<script src="<%= themeConfig.domain %>/media/js/aos.js"></script>
+<script src="<%= themeConfig.domain %>/media/js/pace.min.js"></script>
+<script src="<%= themeConfig.domain %>/media/js/view-image.min.js"></script>
+<script src="<%= themeConfig.domain %>/media/js/jquery.magnific-popup.min.js"></script>
+<script src="<%= themeConfig.domain %>/media/js/functions.js"></script>
+
+<% if (site.customConfig.enableKaTeX !== 'false') { %>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+<% } %>
+<script>
+  // 所有文章数据（排除隐藏文章）
+  window.allPosts = [
+    <% site.posts.forEach(function(post, index) { %>
+      <% if (!post.hideInList) { %>
+        {
+          title: '<%= post.title.replace(/'/g, "\\'") %>',
+          link: '<%= post.link %>',
+          fileName: '<%= post.fileName %>'
+        }<%= index < site.posts.length - 1 ? ',' : '' %>
+      <% } %>
+    <% }); %>
+  ];
+  
+  // Modern Header Functions
+  document.addEventListener('DOMContentLoaded', function() {
+
+    
+    // Back to top from header with scroll percentage
+    var headerBackToTop = document.getElementById('header-back-to-top');
+    var scrollPercentEl = headerBackToTop ? headerBackToTop.querySelector('.scroll-percent') : null;
+    
+    if (headerBackToTop) {
+      // Click to scroll to top
+      headerBackToTop.addEventListener('click', function() {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      });
+      
+      // Update scroll percentage
+      function updateScrollPercent() {
+        var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        var docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        
+        if (docHeight <= 0) {
+          headerBackToTop.classList.remove('visible');
+          return;
+        }
+        
+        var percent = Math.min(100, Math.max(0, Math.round((scrollTop / docHeight) * 100)));
+        
+        if (scrollPercentEl) {
+          scrollPercentEl.textContent = percent;
+        }
+        
+        if (scrollTop <= 10) {
+          headerBackToTop.classList.remove('visible');
+        } else {
+          headerBackToTop.classList.add('visible');
+        }
+      }
+      
+      // Initial check
+      updateScrollPercent();
+      
+      // Update on scroll
+      window.addEventListener('scroll', updateScrollPercent, { passive: true });
+    }
+    
+    // Random post - 随机逛逛（桌面端和移动端）
+    function goToRandomPost() {
+      if (window.allPosts && window.allPosts.length > 0) {
+        var availablePosts = window.allPosts.filter(function(post) {
+          return post && post.link;
+        });
+        if (availablePosts.length > 0) {
+          var randomIndex = Math.floor(Math.random() * availablePosts.length);
+          var randomPost = availablePosts[randomIndex];
+          if (randomPost && randomPost.link) {
+            window.location.href = randomPost.link;
+          }
+        }
+      }
+    }
+    
+    var randomPostBtn = document.querySelector('.random-post');
+    if (randomPostBtn) {
+      randomPostBtn.addEventListener('click', goToRandomPost);
+    }
+    
+    // 移动端菜单中的随机逛逛
+    var mobileRandomPostBtn = document.querySelector('.mobile-random-post');
+    if (mobileRandomPostBtn) {
+      mobileRandomPostBtn.addEventListener('click', goToRandomPost);
+    }
+    
+    // Control panel (placeholder)
+    var controlPanelBtn = document.querySelector('.control-panel');
+    if (controlPanelBtn) {
+      controlPanelBtn.addEventListener('click', function() {
+        // 可以在这里添加中控台功能
+        console.log('Control panel clicked');
+      });
+    }
+    
+    // 移动端点击搜索时自动关闭菜单
+    var mobileSearchLinks = document.querySelectorAll('.mobile-menu a[href="#search-lightbox"]');
+    mobileSearchLinks.forEach(function(link) {
+      link.addEventListener('click', function() {
+        if (mobileMenu) {
+          mobileMenu.classList.remove('active');
+        }
+      });
+    });
+    
+    // 搜索弹窗功能
+    var searchLightbox = document.getElementById('search-lightbox');
+    var searchBtns = document.querySelectorAll('a[href="#search-lightbox"]');
+    
+    // 打开搜索弹窗
+    searchBtns.forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (searchLightbox) {
+          searchLightbox.classList.add('search-open');
+          var searchInput = searchLightbox.querySelector('#s');
+          if (searchInput) {
+            setTimeout(function() {
+              searchInput.focus();
+            }, 100);
+          }
+        }
+      });
+    });
+    
+    // 点击背景关闭搜索弹窗
+    if (searchLightbox) {
+      searchLightbox.addEventListener('click', function(e) {
+        if (e.target === searchLightbox) {
+          searchLightbox.classList.remove('search-open');
+        }
+      });
+      
+      // ESC键关闭搜索弹窗
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && searchLightbox.classList.contains('search-open')) {
+          searchLightbox.classList.remove('search-open');
+        }
+      });
+      
+      // 搜索表单提交
+      var searchForm = document.getElementById('gridea-search-form');
+      if (searchForm) {
+        searchForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          var searchInput = searchForm.querySelector('#s');
+          if (searchInput && searchInput.value.trim()) {
+            window.location.href = '/search/index.html?q=' + encodeURIComponent(searchInput.value.trim());
+          }
+        });
+      }
+    }});
+  });
+
+  // 加载动画管理
+  (function() {
+    // 页面完全加载完成后隐藏加载动画
+    function hideLoadingAnimation() {
+      var loadingAnimation = document.getElementById('loading-animation');
+      if (loadingAnimation) {
+        try {
+          // 添加hidden类来触发过渡动画
+          loadingAnimation.classList.add('hidden');
+          // 等待过渡动画完成后完全隐藏
+          setTimeout(function() {
+            loadingAnimation.style.display = 'none';
+          }, 500);
+        } catch (e) {
+          // 如果出错，直接隐藏
+          loadingAnimation.style.display = 'none';
+        }
+      }
+    }
+
+    // 监听window.load事件
+    window.addEventListener('load', hideLoadingAnimation);
+
+    // 添加一个备用方案，确保加载动画不会一直显示
+    setTimeout(hideLoadingAnimation, 5000); // 最多显示5秒
+  })();
+
+</script>
+</head>

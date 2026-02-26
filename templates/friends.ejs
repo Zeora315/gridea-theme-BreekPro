@@ -1,0 +1,179 @@
+<html>
+  <head>
+  <%- include('./includes/head', { siteTitle: `我的朋友们 | ${themeConfig.siteName}` }) %>
+  </head>
+  <body>
+    <!-- start: #wrapper -->
+    <div class="wrapper">
+      
+      <%- include('./includes/header') %>
+
+      <main id="friends" class="main fullcover no-sidebar content">
+        <div class="grid-container module-wrapper">
+        <div class="epcl-page-wrapper">
+          <div class="left-content grid-70 np-mobile widget_epcl_related_articles">
+
+          <!-- 友链页面头部 -->
+          <div class="friends-header">
+            <div class="friends-header-top">
+              <div class="friends-title-section">
+                <span class="friends-subtitle">友情链接</span>
+                <h1 class="friends-main-title">与百名博主无限进步</h1>
+              </div>
+              <div class="friends-actions">
+                <a href="javascript:void(0)" class="friends-btn friends-btn-random" id="random-visit-btn">
+                  <svg viewBox="0 0 24 24" width="16" height="16">
+                    <path fill="currentColor" d="M14 20v-2h2.6l-3.175-3.175L14.85 13.4L18 16.55V14h2v6zm-8.6 0L4 18.6L16.6 6H14V4h6v6h-2V7.4zm3.775-9.425L4 5.4L5.4 4l5.175 5.175z"/>
+                  </svg>
+                  <span>随机访问</span>
+                </a>
+                <a href="<%= site.customConfig.friendApplyLink || ('mailto:' + (themeConfig.email || '')) %>" class="friends-btn friends-btn-apply">
+                  <svg viewBox="0 0 24 24" width="16" height="16">
+                    <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+                  </svg>
+                  <span>申请友链</span>
+                </a>
+              </div>
+            </div>
+            
+            <!-- 头像轮播 -->
+            <div class="friends-avatar-carousel">
+              <div class="friends-avatar-track" id="avatar-track">
+                <% 
+                var allFriends = [];
+                if (site.customConfig.friends && site.customConfig.friends.length > 0) {
+                  allFriends = site.customConfig.friends.slice(0, 20);
+                }
+                %>
+                <!-- 第一行 -->
+                <div class="avatar-row avatar-row-1">
+                  <% for (var i = 0; i < 10; i++) { %>
+                    <% if (i < allFriends.length) { %>
+                      <a href="<%= allFriends[i].siteLink %>" class="friends-avatar-item" title="<%= allFriends[i].siteName %>">
+                        <img src="<%= allFriends[i].siteLogo %>" alt="<%= allFriends[i].siteName %>">
+                      </a>
+                    <% } else { %>
+                      <a href="#" class="friends-avatar-item" title="等待添加">
+                        <img src="<%= themeConfig.domain %>/media/images/images.jpg" alt="等待添加">
+                      </a>
+                    <% } %>
+                  <% } %>
+                  <!-- 复制一份用于无缝循环 -->
+                  <% for (var i = 0; i < 10; i++) { %>
+                    <% if (i < allFriends.length) { %>
+                      <a href="<%= allFriends[i].siteLink %>" class="friends-avatar-item" title="<%= allFriends[i].siteName %>">
+                        <img src="<%= allFriends[i].siteLogo %>" alt="<%= allFriends[i].siteName %>">
+                      </a>
+                    <% } else { %>
+                      <a href="#" class="friends-avatar-item" title="等待添加">
+                        <img src="<%= themeConfig.domain %>/media/images/images.jpg" alt="等待添加">
+                      </a>
+                    <% } %>
+                  <% } %>
+                </div>
+                <!-- 第二行 -->
+                <div class="avatar-row avatar-row-2">
+                  <% for (var i = 10; i < 20; i++) { %>
+                    <% if (i < allFriends.length) { %>
+                      <a href="<%= allFriends[i].siteLink %>" class="friends-avatar-item" title="<%= allFriends[i].siteName %>">
+                        <img src="<%= allFriends[i].siteLogo %>" alt="<%= allFriends[i].siteName %>">
+                      </a>
+                    <% } else { %>
+                      <a href="#" class="friends-avatar-item" title="等待添加">
+                        <img src="<%= themeConfig.domain %>/media/images/images.jpg" alt="等待添加">
+                      </a>
+                    <% } %>
+                  <% } %>
+                  <!-- 复制一份用于无缝循环 -->
+                  <% for (var i = 10; i < 20; i++) { %>
+                    <% if (i < allFriends.length) { %>
+                      <a href="<%= allFriends[i].siteLink %>" class="friends-avatar-item" title="<%= allFriends[i].siteName %>">
+                        <img src="<%= allFriends[i].siteLogo %>" alt="<%= allFriends[i].siteName %>">
+                      </a>
+                    <% } else { %>
+                      <a href="#" class="friends-avatar-item" title="等待添加">
+                        <img src="<%= themeConfig.domain %>/media/images/images.jpg" alt="等待添加">
+                      </a>
+                    <% } %>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 友链列表 -->
+          <div class="friends-list">
+            <% if (site.customConfig.friends && site.customConfig.friends.length > 0) { %>
+              <% site.customConfig.friends.forEach(function(friend, index) { %>
+                <a href="<%= friend.siteLink %>" class="friend-card" data-index="<%= index %>">
+                  <div class="friend-avatar">
+                    <img src="<%= friend.siteLogo %>" alt="<%= friend.siteName %>">
+                  </div>
+                  <div class="friend-info">
+                    <h3 class="friend-name"><%= friend.siteName %></h3>
+                    <p class="friend-desc"><%= friend.description || '暂无描述' %></p>
+                  </div>
+                </a>
+              <% }); %>
+            <% } else { %>
+              <div class="friends-empty">
+                <p>暂无友链，快来申请吧！</p>
+              </div>
+            <% } %>
+          </div>
+
+        </div>
+
+        </div>
+          </div>
+        </div>
+      </main>
+
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          // 随机访问功能
+          var randomBtn = document.getElementById('random-visit-btn');
+          var friendCards = document.querySelectorAll('.friend-card');
+          
+          if (randomBtn && friendCards.length > 0) {
+            randomBtn.addEventListener('click', function(e) {
+              e.preventDefault();
+              var randomIndex = Math.floor(Math.random() * friendCards.length);
+              var randomLink = friendCards[randomIndex].getAttribute('href');
+              if (randomLink) {
+                window.open(randomLink, '_blank');
+              }
+            });
+          }
+          
+          // 头像轮播暂停功能
+          var avatarRows = document.querySelectorAll('.avatar-row');
+          avatarRows.forEach(function(row) {
+            row.addEventListener('mouseenter', function() {
+              this.style.animationPlayState = 'paused';
+            });
+            row.addEventListener('mouseleave', function() {
+              this.style.animationPlayState = 'running';
+            });
+          });
+          
+          // KaTeX 数学公式渲染
+          if (typeof renderMathInElement !== 'undefined') {
+            renderMathInElement(document.body, {
+              delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+              ],
+              throwOnError: false
+            });
+          }
+        });
+      </script>
+
+    <%- include('./includes/footer') %>
+    </div>
+    <!-- end: #wrapper -->
+  </body>
+</html>

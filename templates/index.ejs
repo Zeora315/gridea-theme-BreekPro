@@ -1,0 +1,177 @@
+<html>
+  <head>
+    <%- include('./includes/head', { siteTitle: themeConfig.siteName }) %>
+  </head>
+  <body>
+    <!-- start: #wrapper -->
+    <div class="wrapper">
+      
+      <%- include('./includes/header') %>
+
+      <main id="home" class="main">
+        <div class="grid-container module-wrapper enable-masonry aos-init aos-animate" data-aos="fade-up">
+        <div class="row">
+          <div class="content-wrapper grid-posts content">
+            
+            <!-- 欢迎区域 -->
+            <div class="welcome-section">
+              <h1 class="welcome-title"><%= site.customConfig.welcomeTitle || '欢迎来到我的博客' %></h1>
+              <% if (site.customConfig.welcomeSubtitle) { %>
+              <p class="welcome-subtitle"><%= site.customConfig.welcomeSubtitle %></p>
+              <% } %>
+            </div>
+            
+            <!-- Banner 区域 - 轮播置顶文章 -->
+            <% 
+            var topPosts = posts.filter(function(p) { return p.isTop; });
+            if (topPosts.length > 0) { 
+            %>
+            <div class="banner-section">
+              <div class="banner-carousel" id="banner-carousel">
+                <div class="banner-track" id="banner-track">
+                  <% topPosts.forEach(function(bannerPost, index) { %>
+                  <a href="<%= bannerPost.link %>" class="banner-card" data-index="<%= index %>">
+                    <div class="banner-image">
+                      <img src="<% if (bannerPost.feature) { %><%= bannerPost.feature %><% } else { %><%= site.customConfig.featureImage %><%} %>" alt="<%= bannerPost.title %>">
+                    </div>
+                    <div class="banner-content">
+                      <time class="banner-date" datetime="<%= bannerPost.dateFormat %>"><%= bannerPost.dateFormat %></time>
+                      <h2 class="banner-title"><%= bannerPost.title %></h2>
+                      <div class="banner-tags">
+                        <% if (bannerPost.tags && bannerPost.tags.length > 0) { %>
+                          <% bannerPost.tags.forEach(function(tag) { %>
+                            <span class="banner-tag">#<%= tag.name %></span>
+                          <% }); %>
+                        <% } %>
+                      </div>
+                    </div>
+                  </a>
+                  <% }); %>
+                </div>
+                
+                <!-- 轮播指示器 -->
+                <% if (topPosts.length > 1) { %>
+                <div class="banner-dots">
+                  <% topPosts.forEach(function(_, index) { %>
+                    <span class="banner-dot <%= index === 0 ? 'active' : '' %>" data-index="<%= index %>"></span>
+                  <% }); %>
+                </div>
+                <% } %>
+                
+
+              </div>
+            </div>
+            
+            <script>
+            (function() {
+              var carousel = document.getElementById('banner-carousel');
+              var track = document.getElementById('banner-track');
+              var cards = track.querySelectorAll('.banner-card');
+              var dots = carousel.querySelectorAll('.banner-dot');
+              var currentIndex = 0;
+              var total = cards.length;
+              var autoPlayInterval;
+              
+              if (total <= 1) return;
+              
+              function goToSlide(index) {
+                if (index < 0) index = total - 1;
+                if (index >= total) index = 0;
+                currentIndex = index;
+                track.style.transform = 'translateX(-' + (currentIndex * 100) + '%)';
+                
+                dots.forEach(function(dot, i) {
+                  dot.classList.toggle('active', i === currentIndex);
+                });
+              }
+              
+              function nextSlide() {
+                goToSlide(currentIndex + 1);
+              }
+              
+              function startAutoPlay() {
+                autoPlayInterval = setInterval(nextSlide, 5000);
+              }
+              
+              function stopAutoPlay() {
+                clearInterval(autoPlayInterval);
+              }
+              
+              dots.forEach(function(dot, index) {
+                dot.addEventListener('click', function() {
+                  stopAutoPlay();
+                  goToSlide(index);
+                  startAutoPlay();
+                });
+              });
+              
+              carousel.addEventListener('mouseenter', stopAutoPlay);
+              carousel.addEventListener('mouseleave', startAutoPlay);
+              
+              startAutoPlay();
+            })();
+            </script>
+            <% } %>
+                
+            <!-- start: .articles -->
+            <div class="articles columns-3">
+              <% 
+              // 按时间倒序排序，不考虑置顶状态
+              var sortedPosts = posts.slice().sort(function(a, b) {
+                return new Date(b.date) - new Date(a.date);
+              });
+              sortedPosts.forEach(function(post, postIndex) { %>
+              <article class="post-card grid-33 tablet-grid-50 mobile-grid-100 np-mobile post type-post status-publish format-standard has-post-thumbnail hentry">
+                <div class="article-wrapper">
+                  <a href="<%= post.link %>" class="post-card-image">
+                    <div class="featured-image cover" style="background-image: url('<% if (post.feature) { %><%= post.feature %><% } else { %><%= site.customConfig.featureImage %><%} %>');"></div>
+                  </a>
+                  <div class="post-card-content">
+                    <h2 class="post-title"><a href="<%= post.link %>"><%= post.title %></a></h2>
+                    <div class="post-footer">
+                      <div class="post-tags">
+                        <% if (post.tags && post.tags.length > 0) { %>
+                          <% post.tags.slice(0, 2).forEach(function(tag) { %>
+                            <span class="tag">#<%= tag.name %></span>
+                          <% }); %>
+                        <% } %>
+                      </div>
+                      <time class="post-date" datetime="<%= post.dateFormat %>"><%= post.dateFormat %></time>
+                    </div>
+                  </div>
+                </div>
+              </article>
+              <% }); %>
+              <div class="clear"></div>
+            </div>
+            <!-- end: .articles -->
+            
+            <%- include('./includes/pagination') %>
+
+          </div>
+          </div>
+        </div>
+      </main>
+
+    <%- include('./includes/footer') %>
+    </div>
+    <!-- end: #wrapper -->
+    
+    <script>
+      // KaTeX 数学公式渲染
+      document.addEventListener('DOMContentLoaded', function() {
+        if (typeof renderMathInElement !== 'undefined') {
+          renderMathInElement(document.body, {
+            delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

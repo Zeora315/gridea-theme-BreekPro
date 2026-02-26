@@ -1,0 +1,66 @@
+<html>
+  <head>
+    <%- include('./includes/head', { siteTitle: `搜索结果 | ${themeConfig.siteName}` }) %>
+    <script src="/media/gridea-search/fuse.js"></script>
+    <script src="/media/gridea-search/ejs.min.js"></script>
+    <script src="/media/gridea-search/gridea-search.js"></script>
+    <script src="/media/gridea-search/result-template.ejs" type="text/ejs"></script>
+</head>
+
+  <body>
+    <!-- start: #wrapper -->
+    <div class="wrapper">
+      
+      <%- include('./includes/header') %>
+
+      <main id="search-results" class="main fullcover no-sidebar content">
+        <div class="grid-container module-wrapper">
+          <div class="epcl-page-wrapper">
+            <div class="search-results-wrapper">
+              <!-- 搜索标题 -->
+              <div class="search-header">
+                <h1 class="search-title">搜索结果</h1>
+                <div class="search-query" id="search-query-display"></div>
+              </div>
+              
+              <!-- 加载中 -->
+              <div class="search-loading" id="search-loading">
+                <div class="loading-spinner"></div>
+                <p>正在搜索...</p>
+              </div>
+              
+              <!-- 无结果 -->
+              <div class="search-no-result" id="search-no-result" style="display:none">
+                <div class="no-result-icon">
+                  <i class="fas fa-search"></i>
+                </div>
+                <h3>未找到相关文章</h3>
+                <p>换个关键词试试</p>
+              </div>
+              
+              <!-- 搜索结果 -->
+              <div id="gridea-search-result" class="search-results-grid"></div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+    <%- include('./includes/footer') %>
+    </div>
+    <!-- end: #wrapper -->
+    
+    <script>
+      // 显示搜索关键词
+      document.addEventListener('DOMContentLoaded', function() {
+        var urlParams = new URLSearchParams(window.location.search);
+        var query = urlParams.get('q');
+        if (query) {
+          var queryDisplay = document.getElementById('search-query-display');
+          if (queryDisplay) {
+            queryDisplay.innerHTML = '"' + decodeURIComponent(query) + '"';
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

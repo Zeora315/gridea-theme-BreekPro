@@ -1,0 +1,168 @@
+<!doctype html>
+<html>
+  <head>
+    <%- include('./includes/head', { siteTitle: `${site.customConfig.bangumisTitle || '追番列表'} | ${themeConfig.siteName}` }) %>
+  </head>
+  <body>
+    <!-- start: #wrapper -->
+    <div class="wrapper">
+      
+      <%- include('./includes/header') %>
+
+      <main id="bangumis" class="main fullcover no-sidebar content">
+        <div class="grid-container module-wrapper">
+          <div class="epcl-page-wrapper">
+            <div class="bangumis-container">
+              <!-- 页面标题 -->
+              <h1 class="bangumis-title"><%= site.customConfig.bangumisTitle || '追番列表' %></h1>
+              
+              <!-- 副标题 -->
+              <% if (site.customConfig.bangumisSubtitle) { %>
+              <div class="bangumis-subtitle"><%= site.customConfig.bangumisSubtitle %></div>
+              <% } %>
+              
+              <!-- 标签页 -->
+              <div class="bangumis-tabs">
+                <button class="bangumis-tab active" data-tab="want">
+                  想看 (<span class="tab-count" data-status="want">0</span>)
+                </button>
+                <button class="bangumis-tab" data-tab="watching">
+                  在看 (<span class="tab-count" data-status="watching">0</span>)
+                </button>
+                <button class="bangumis-tab" data-tab="watched">
+                  已看 (<span class="tab-count" data-status="watched">0</span>)
+                </button>
+              </div>
+              
+              <!-- 番剧列表 -->
+              <div class="bangumis-list">
+                <% 
+                var bangumis = site.customConfig.bangumis || [];
+                bangumis.forEach(function(item) { 
+                %>
+                <div class="bangumi-item" data-status="<%= item.status || 'watching' %>">
+                  <div class="bangumi-cover">
+                    <% if (item.link) { %><a href="<%= item.link %>" target="_blank"><% } %>
+                      <img src="<%= item.cover || site.customConfig.featureImage %>" alt="<%= item.title %>">
+                    <% if (item.link) { %></a><% } %>
+                  </div>
+                  <div class="bangumi-info">
+                    <h3 class="bangumi-name">
+                      <% if (item.link) { %><a href="<%= item.link %>" target="_blank"><% } %>
+                        <%= item.title %>
+                      <% if (item.link) { %></a><% } %>
+                    </h3>
+                    <div class="bangumi-meta">
+                      <% if (item.episodes) { %>
+                      <span class="meta-item episodes"><%= item.episodes %></span>
+                      <% } %>
+                      <% if (item.genre) { %>
+                      <span class="meta-item genre"><%= item.genre %></span>
+                      <% } %>
+                      <% if (item.region) { %>
+                      <span class="meta-item region"><%= item.region %></span>
+                      <% } %>
+                      <% if (item.rating) { %>
+                      <span class="meta-item rating">
+                        <span class="meta-label">评分</span>
+                        <span class="meta-value"><%= item.rating %></span>
+                      </span>
+                      <% } %>
+                    </div>
+                    <% if (item.description) { %>
+                    <div class="bangumi-desc">
+                      <span class="desc-label">简介：</span><%= item.description %>
+                    </div>
+                    <% } %>
+                  </div>
+                </div>
+                <% }); %>
+              </div>
+              
+              <!-- 空状态 -->
+              <% if (bangumis.length === 0) { %>
+              <div class="bangumis-empty">
+                <p>还没有添加番剧，请在配置中添加~</p>
+              </div>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </main>
+      
+      <%- include('./includes/footer') %>
+      
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          const tabs = document.querySelectorAll('.bangumis-tab');
+          const items = document.querySelectorAll('.bangumi-item');
+          
+          // 过滤函数
+          function filterItems(status) {
+            items.forEach(function(item) {
+              if (item.getAttribute('data-status') === status) {
+                item.style.display = 'flex';
+              } else {
+                item.style.display = 'none';
+              }
+            });
+          }
+          
+          // 计算各状态数量
+          const counts = { want: 0, watching: 0, watched: 0 };
+          items.forEach(function(item) {
+            const status = item.getAttribute('data-status');
+            if (counts[status] !== undefined) {
+              counts[status]++;
+            }
+          });
+          
+          // 更新数量显示
+          document.querySelectorAll('.tab-count').forEach(function(el) {
+            const status = el.getAttribute('data-status');
+            el.textContent = counts[status] || 0;
+          });
+          
+          // 默认显示"在看"标签
+          const defaultTab = 'watching';
+          filterItems(defaultTab);
+          tabs.forEach(function(tab) {
+            tab.classList.remove('active');
+            if (tab.getAttribute('data-tab') === defaultTab) {
+              tab.classList.add('active');
+            }
+          });
+          
+          // 标签切换
+          tabs.forEach(function(tab) {
+            tab.addEventListener('click', function() {
+              const status = this.getAttribute('data-tab');
+              
+              // 更新标签状态
+              tabs.forEach(function(t) { t.classList.remove('active'); });
+              this.classList.add('active');
+              
+              // 过滤显示
+              filterItems(status);
+            });
+          });
+        });
+        
+        // KaTeX 数学公式渲染
+        if (typeof renderMathInElement !== 'undefined') {
+          renderMathInElement(document.body, {
+            delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+          });
+        }
+      });
+    </script>
+    </div>
+    <!-- end: #wrapper -->
+  </body>
+</html>

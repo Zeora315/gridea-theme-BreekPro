@@ -1,0 +1,170 @@
+<!doctype html>
+<html>
+  <head>
+    <%- include('./includes/head', { siteTitle: `${site.customConfig.booksTitle || '阅读'} | ${themeConfig.siteName}` }) %>
+  </head>
+  <body>
+    <!-- start: #wrapper -->
+    <div class="wrapper">
+      
+      <%- include('./includes/header') %>
+
+      <main id="books" class="main fullcover no-sidebar content">
+        <div class="grid-container module-wrapper">
+          <div class="epcl-page-wrapper">
+            <div class="books-container">
+              <!-- 页面标题 -->
+              <h1 class="books-title"><%= site.customConfig.booksTitle || '阅读' %></h1>
+              
+              <!-- 副标题 -->
+              <% if (site.customConfig.booksSubtitle) { %>
+              <div class="books-subtitle"><%= site.customConfig.booksSubtitle %></div>
+              <% } %>
+              
+              <!-- 标签页 -->
+              <div class="books-tabs">
+                <button class="books-tab active" data-tab="reading">
+                  在读(<span class="tab-count" data-status="reading">0</span>)
+                </button>
+                <button class="books-tab" data-tab="want">
+                  想读(<span class="tab-count" data-status="want">0</span>)
+                </button>
+                <button class="books-tab" data-tab="read">
+                  已读(<span class="tab-count" data-status="read">0</span>)
+                </button>
+              </div>
+              
+              <!-- 书籍列表 -->
+              <div class="books-list">
+                <% 
+                var books = site.customConfig.books || [];
+                books.forEach(function(item) { 
+                %>
+                <div class="book-item" data-status="<%= item.status || 'reading' %>">
+                  <div class="book-cover">
+                    <% if (item.link) { %><a href="<%= item.link %>" target="_blank"><% } %>
+                      <img src="<%= item.cover || site.customConfig.featureImage %>" alt="<%= item.title %>">
+                    <% if (item.link) { %></a><% } %>
+                  </div>
+                  <div class="book-info">
+                    <h3 class="book-name">
+                      <% if (item.link) { %><a href="<%= item.link %>" target="_blank"><% } %>
+                        <%= item.title %>
+                      <% if (item.link) { %></a><% } %>
+                    </h3>
+                    <div class="book-meta">
+                      <% if (item.author) { %>
+                      <span class="meta-item author"><%= item.author %></span>
+                      <% } %>
+                      <% if (item.publisher) { %>
+                      <span class="meta-item publisher">/ <%= item.publisher %></span>
+                      <% } %>
+                    </div>
+                    <% if (item.rating) { %>
+                    <div class="book-rating">
+                      <% for (var i = 0; i < 5; i++) { %>
+                        <% if (i < parseInt(item.rating)) { %>
+                          <span class="star filled">★</span>
+                        <% } else { %>
+                          <span class="star">☆</span>
+                        <% } %>
+                      <% } %>
+                    </div>
+                    <% } %>
+                    <% if (item.description) { %>
+                    <div class="book-desc">
+                      <%= item.description %>
+                    </div>
+                    <% } %>
+                  </div>
+                </div>
+                <% }); %>
+              </div>
+              
+              <!-- 空状态 -->
+              <% if (books.length === 0) { %>
+              <div class="books-empty">
+                <p>还没有添加书籍，请在配置中添加~</p>
+              </div>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </main>
+      
+      <%- include('./includes/footer') %>
+      
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          var tabs = document.querySelectorAll('.books-tab');
+          var items = document.querySelectorAll('.book-item');
+          
+          // 过滤函数
+          function filterItems(status) {
+            items.forEach(function(item) {
+              if (item.getAttribute('data-status') === status) {
+                item.style.display = 'flex';
+              } else {
+                item.style.display = 'none';
+              }
+            });
+          }
+          
+          // 计算各状态数量
+          var counts = { want: 0, reading: 0, read: 0 };
+          items.forEach(function(item) {
+            var status = item.getAttribute('data-status');
+            if (counts[status] !== undefined) {
+              counts[status]++;
+            }
+          });
+          
+          // 更新数量显示
+          document.querySelectorAll('.tab-count').forEach(function(el) {
+            var status = el.getAttribute('data-status');
+            el.textContent = counts[status] || 0;
+          });
+          
+          // 默认显示"在读"标签
+          var defaultTab = 'reading';
+          filterItems(defaultTab);
+          tabs.forEach(function(tab) {
+            tab.classList.remove('active');
+            if (tab.getAttribute('data-tab') === defaultTab) {
+              tab.classList.add('active');
+            }
+          });
+          
+          // 标签切换
+          tabs.forEach(function(tab) {
+            tab.addEventListener('click', function() {
+              var status = this.getAttribute('data-tab');
+              
+              // 更新标签状态
+              tabs.forEach(function(t) { t.classList.remove('active'); });
+              this.classList.add('active');
+              
+              // 过滤显示
+              filterItems(status);
+            });
+          });
+        });
+        
+        // KaTeX 数学公式渲染
+        if (typeof renderMathInElement !== 'undefined') {
+          renderMathInElement(document.body, {
+            delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+          });
+        }
+      });
+    </script>
+    </div>
+    <!-- end: #wrapper -->
+  </body>
+</html>

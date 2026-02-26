@@ -1,0 +1,167 @@
+<!doctype html>
+<html>
+  <head>
+    <%- include('./includes/head', { siteTitle: `${site.customConfig.essayTitle || '即刻说说'} | ${themeConfig.siteName}` }) %>
+  </head>
+  <body>
+    <!-- start: #wrapper -->
+    <div class="wrapper">
+      
+      <%- include('./includes/header') %>
+
+      <!-- 顶部背景区域 - 放在容器外，与文章页一致 -->
+      <div class="essay-header" style="background-image: url('<%= site.customConfig.essayBackground || site.customConfig.featureImage %>');">
+        <div class="essay-header-content">
+          <h1 class="essay-title"><%= site.customConfig.essayTitle || '即刻短文' %></h1>
+          <% if (site.customConfig.essaySubtitle) { %>
+          <div class="essay-subtitle"><%= site.customConfig.essaySubtitle %></div>
+          <% } %>
+          <% if (site.customConfig.essayButtonText && site.customConfig.essayButtonLink) { %>
+          <a href="<%= site.customConfig.essayButtonLink %>" class="essay-header-btn">
+            <%= site.customConfig.essayButtonText %>
+            <i class="fas fa-arrow-right"></i>
+          </a>
+          <% } %>
+        </div>
+      </div>
+
+      <main id="essay" class="main fullcover no-sidebar content">
+        <div class="grid-container module-wrapper">
+          <div class="epcl-page-wrapper">
+            <div class="essay-container">
+              <!-- 说说列表 -->
+              <div class="essay-list">
+                <% 
+                var essays = site.customConfig.essays || [];
+                var limit = parseInt(site.customConfig.essayLimit) || 30;
+                var displayEssays = essays.slice(0, limit);
+                
+                displayEssays.forEach(function(item) { 
+                  // 处理图片
+                  var images = [];
+                  if (item.images) {
+                    if (typeof item.images === 'string') {
+                      images = item.images.split('\n').filter(function(img) { return img.trim() !== ''; });
+                    } else if (Array.isArray(item.images)) {
+                      images = item.images;
+                    }
+                  }
+                  
+                  // 处理视频
+                  var videos = [];
+                  if (item.videos) {
+                    if (typeof item.videos === 'string') {
+                      videos = item.videos.split('\n').filter(function(vid) { return vid.trim() !== ''; });
+                    } else if (Array.isArray(item.videos)) {
+                      videos = item.videos;
+                    }
+                  }
+                %>
+                <div class="essay-item">
+                  <div class="essay-content">
+                    <div class="essay-text"><%= item.content %></div>
+                    
+                    <!-- 图片 -->
+                    <% if (images.length > 0) { %>
+                    <div class="essay-images">
+                      <% images.forEach(function(img) { %>
+                        <img src="<%= img.trim() %>" alt="" class="essay-image">
+                      <% }); %>
+                    </div>
+                    <% } %>
+                    
+                    <!-- 视频 -->
+                    <% if (videos.length > 0) { %>
+                    <div class="essay-videos">
+                      <% videos.forEach(function(video) { %>
+                        <% if (video.indexOf('player.bilibili.com') !== -1) { %>
+                          <iframe src="<%= video.trim() %>" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" class="essay-video"></iframe>
+                        <% } else { %>
+                          <video src="<%= video.trim() %>" controls class="essay-video"></video>
+                        <% } %>
+                      <% }); %>
+                    </div>
+                    <% } %>
+                    
+                    <!-- 音乐 -->
+                    <% if (item.aplayer) { %>
+                    <div class="essay-music" data-server="<%= item.aplayer.server %>" data-id="<%= item.aplayer.id %>">
+                      <i class="fas fa-music"></i>
+                      <span>音乐</span>
+                    </div>
+                    <% } %>
+                    
+                    <!-- 链接 -->
+                    <% if (item.link) { %>
+                    <a href="<%= item.link %>" class="essay-link" target="_blank">
+                      <i class="fas fa-link"></i>
+                      <span>查看详情</span>
+                    </a>
+                    <% } %>
+                  </div>
+                  
+                  <div class="essay-meta">
+                    <span class="essay-date">
+                      <i class="far fa-clock"></i>
+                      <%= item.date %>
+                    </span>
+                    <% if (item.address) { %>
+                    <span class="essay-address">
+                      <i class="fas fa-map-marker-alt"></i>
+                      <%= item.address %>
+                    </span>
+                    <% } %>
+                    <% if (item.from) { %>
+                    <span class="essay-from">
+                      <i class="fas fa-user"></i>
+                      <%= item.from %>
+                    </span>
+                    <% } %>
+                  </div>
+                </div>
+                <% }); %>
+              </div>
+              
+              <!-- 加载更多 -->
+              <% if (essays.length > limit) { %>
+              <div class="essay-load-more">
+                <button class="load-more-btn" id="loadMoreEssay">加载更多</button>
+              </div>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </main>
+      
+      <%- include('./includes/footer') %>
+      
+    </div>
+    <!-- end: #wrapper -->
+    
+    <script>
+      // 简单的加载更多功能
+      document.addEventListener('DOMContentLoaded', function() {
+        var loadMoreBtn = document.getElementById('loadMoreEssay');
+        if (loadMoreBtn) {
+          loadMoreBtn.addEventListener('click', function() {
+            // 这里可以实现加载更多逻辑
+            alert('更多内容加载功能需要配合后端实现');
+          });
+        }
+        
+        // KaTeX 数学公式渲染
+        if (typeof renderMathInElement !== 'undefined') {
+          renderMathInElement(document.body, {
+            delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

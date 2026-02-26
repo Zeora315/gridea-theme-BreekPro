@@ -1,0 +1,93 @@
+<html>
+  <head>
+    <%- include('./includes/head', { siteTitle: `文章归档 | ${themeConfig.siteName}` }) %>
+  </head>
+  <body>
+    <!-- start: #wrapper -->
+    <div class="wrapper">
+      
+      <%- include('./includes/header') %>
+
+      <main id="archives-page" class="main">
+        <div class="grid-container">
+          <div class="archives-wrapper">
+            <h1 class="archives-title">文章总览 - <%= site.posts.length %></h1>
+            
+            <% 
+              // 按年份分组文章
+              let postsByYear = {};
+              let sortedPosts = site.posts.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+              let postIndex = 1;
+              
+              sortedPosts.forEach(function(post) {
+                if (!post.hideInList) {
+                  const year = post.date.substring(0, 4);
+                  if (!postsByYear[year]) {
+                    postsByYear[year] = [];
+                  }
+                  postsByYear[year].push(post);
+                }
+              });
+              
+              const years = Object.keys(postsByYear).sort((a, b) => b - a);
+            %>
+            
+            <% years.forEach(function(year) { %>
+              <div class="archives-year-section">
+                <h2 class="archives-year"><%= year %></h2>
+                <div class="archives-list">
+                  <% postsByYear[year].forEach(function(post) { %>
+                    <article class="archives-item">
+                      <a href="<%= post.link %>" class="archives-link">
+                        <div class="archives-thumb">
+                          <img src="<% if (post.feature) { %><%= post.feature %><% } else { %><%= site.customConfig.featureImage %><%} %>" alt="<%= post.title %>">
+                        </div>
+                        <div class="archives-content">
+                          <h3 class="archives-item-title"><%= post.title %></h3>
+                          <div class="archives-meta">
+                            <span class="archives-date">
+                              <i class="fa fa-calendar"></i>
+                              <%= post.dateFormat %>
+                            </span>
+                            <% if (post.tags && post.tags.length > 0) { %>
+                              <div class="archives-tags">
+                                <% post.tags.forEach(function(tag) { %>
+                                  <span class="archives-tag">#<%= tag.name %></span>
+                                <% }); %>
+                              </div>
+                            <% } %>
+                          </div>
+                        </div>
+                        <div class="archives-number"><%= postIndex++ %></div>
+                      </a>
+                    </article>
+                  <% }); %>
+                </div>
+              </div>
+            <% }); %>
+          </div>
+        </div>
+      </main>
+
+    <%- include('./includes/footer') %>
+    </div>
+    <!-- end: #wrapper -->
+    
+    <script>
+      // KaTeX 数学公式渲染
+      document.addEventListener('DOMContentLoaded', function() {
+        if (typeof renderMathInElement !== 'undefined') {
+          renderMathInElement(document.body, {
+            delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

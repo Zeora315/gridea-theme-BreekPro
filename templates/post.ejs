@@ -1,0 +1,212 @@
+<html>
+  <head>
+    <%- include('./includes/head', { siteTitle: `${post.title} | ${themeConfig.siteName}` }) %>
+    <meta name="referrer" content="never">
+    <meta name="description" content="<%- post.description %>" />
+    <meta name="keywords" content="<%- post.tags.map(tag => tag.name).join(',') %>" />
+    <script src="<%= themeConfig.domain %>/media/js/waterfall.min.js"></script>
+    <script src="<%= themeConfig.domain %>/media/js/prism.min.js"></script>
+  </head>
+  <body>
+      <%- include('./includes/header') %>
+
+      <!-- 文章头部区域 - 封面高斯模糊背景 -->
+      <div class="post-header" id="post-header">
+        <div class="post-header-bg" id="post-header-bg"></div>
+        <div class="post-header-content">
+          <!-- 标签 -->
+          <div class="post-header-tags">
+            <% post.tags.forEach(function(tag, tagIndex) { %>
+              <a href="<%= tag.link %>" class="post-tag"># <%= tag.name %></a>
+            <% }); %>
+          </div>
+
+          <!-- 标题 -->
+          <h1 class="post-header-title"><%= post.title %></h1>
+
+          <!-- 元信息 -->
+          <div class="post-header-meta">
+            <span class="meta-item" title="文章字数">
+              <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm4 18H6V4h7v5h5v11zM8 12h8v2H8v-2zm0 4h8v2H8v-2zm0-8h3v2H8V8z"/></svg>
+              <span id="word-count">0</span> 字
+            </span>
+            <span class="meta-item" title="阅读时间">
+              <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+              <span id="read-time">0</span> 分钟
+            </span>
+            <span class="meta-item" title="发布时间">
+              <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg>
+              <%= post.dateFormat %>
+            </span>
+
+          </div>
+        </div>
+      </div>
+
+      <main id="single" class="main grid-container fullcover no-sidebar aos-init aos-animate" data-aos="fade">
+        <div class="epcl-page-wrapper">
+          <div class="left-content grid-70 np-mobile">
+            <article class="main-article post">
+              <% if (post.abstract) { %>
+              <!-- AI摘要卡片 -->
+              <div class="ai-summary-card">
+                <div class="ai-summary-header">
+                  <div class="ai-summary-title">
+                    <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                    <span>文章摘要</span>
+                    <% if (site.customConfig.aiSummaryLink) { %>
+                    <a href="<%= site.customConfig.aiSummaryLink %>" target="_blank" class="ai-summary-arrow-link" title="了解更多">
+                      <svg class="arrow-icon" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                    </a>
+                    <% } else { %>
+                    <svg class="arrow-icon" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                    <% } %>
+                  </div>
+                  <div class="ai-summary-badge"><%= site.customConfig.aiSummaryName || 'AI' %></div>
+                </div>
+                <div class="ai-summary-content">
+                  <% var abstractText = post.abstract.replace(/<[^>]*>/g, '').replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/"/g, '&quot;'); %>
+                  <span class="ai-summary-text" data-text="<%= abstractText %>"></span>
+                  <span class="ai-summary-cursor"></span>
+                </div>
+              </div>
+              <% } %>
+              <section class="post-content">
+                <div class="text" id="post-content-text">
+                  <% if (post.abstract) { %>
+                    <% var contentWithoutAbstract = post.content.replace(post.abstract, '').trim(); %>
+                    <%- contentWithoutAbstract %>
+                  <% } else { %>
+                    <%- post.content %>
+                  <% } %>
+                </div>
+                <div class="clear"></div>
+              </section>
+
+
+            </article>
+            <div class="clear"></div>
+
+            <section class="related section">
+              <% if (post.prevPost) { %>
+              <article class="prev grid-50 tablet-grid-50 grid-parent">
+                <div class="thumb cover lazy loaded" style="background-image: url('<% if (post.prevPost.feature) { %><%= post.prevPost.feature %><% } else if (post.prevPost.tags[0]) { %><%= themeConfig.domain %>/media/images/<%= post.prevPost.tags[0].slug %>.jpg<% } else { %><%= themeConfig.domain %>/media/images/gridea.jpg<%} %>');"></div>
+                 <a href="<%= post.prevPost.link %>" class="full-link"></a>
+                 <div class="info">
+                  <time datetime="<%= post.prevPost.dateFormat %>"><%= post.prevPost.dateFormat %></time>
+                  <h4 class="title white no-margin"><%= post.prevPost.title %></h4>
+                </div>
+                 <span class="epcl-button red">
+                  <img src="<%= themeConfig.domain %>/media/images/left-arrow.svg" width="15" alt="Left Arrow">
+                </span>
+                <div class="overlay"></div>
+              </article>
+              <% } %>
+              <% if (post.nextPost) { %>
+              <article class="next grid-50 tablet-grid-50 grid-parent">
+                <div class="thumb cover lazy loaded" style="background-image: url('<% if (post.nextPost.feature) { %><%= post.nextPost.feature %><% } else if (post.nextPost.tags[0]) { %><%= themeConfig.domain %>/media/images/<%= post.nextPost.tags[0].slug %>.jpg<% } else { %><%= themeConfig.domain %>/media/images/gridea.jpg<%} %>');"></div>
+                 <a href="<%= post.nextPost.link %>" class="full-link"></a>
+                 <div class="info">
+                  <time datetime="<%= post.nextPost.dateFormat %>"><%= post.nextPost.dateFormat %></time>
+                  <h4 class="title white no-margin"><%= post.nextPost.title %></h4>
+                </div>
+                 <span class="epcl-button red">
+                  <img src="<%= themeConfig.domain %>/media/images/right-arrow.svg" width="15" alt="Left Arrow">
+                </span>
+                <div class="overlay"></div>
+              </article>
+              <% } %>
+
+                <div class="clear"></div>
+            </section>
+
+              <div class="clear"></div>
+
+            <% if ( typeof commentSetting !== 'undefined' && commentSetting.showComment) { %>
+              <div id="comments" class="bg-white hosted ">
+                <% if (commentSetting.commentPlatform === 'gitalk') { %>
+                  <%- include('./includes/gitalk') %>
+                <% } %>
+                <% if (commentSetting.commentPlatform === 'disqus') { %>
+                  <%- include('./includes/disqus') %>
+                <% } %>
+              </div>
+            <% } else if (site.customConfig.envId) { %>
+              <div id="comments" class="bg-white hosted ">
+                <%- include('./includes/valine') %>
+              </div>
+            <% } %>
+
+            </div>
+          </div>
+      </main>
+
+      <%- include('./includes/footer') %>
+
+    <script src="<%= themeConfig.domain %>/media/js/functions-post.js"></script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const contentText = document.getElementById('post-content-text');
+        if (contentText) {
+          const text = contentText.innerText || contentText.textContent || '';
+          const cnChars = text.match(/[\u4e00-\u9fa5]/g) || [];
+          const enWords = text.match(/[a-zA-Z]+/g) || [];
+          const wordCount = cnChars.length + enWords.length;
+          const readTime = Math.max(1, Math.ceil(wordCount / 300));
+          const wordCountEl = document.getElementById('word-count');
+          const readTimeEl = document.getElementById('read-time');
+          if (wordCountEl) wordCountEl.textContent = wordCount;
+          if (readTimeEl) readTimeEl.textContent = readTime;
+        }
+
+        const postHeaderBg = document.getElementById('post-header-bg');
+        const featureImage = '<% if (post.feature) { %><%= post.feature %><% } else { %><%= site.customConfig.featureImage %><%} %>';
+        if (featureImage && postHeaderBg && featureImage.trim() !== '') {
+          postHeaderBg.style.backgroundImage = `url(${featureImage})`;
+        }
+
+        const aiSummaryText = document.querySelector('.ai-summary-text');
+        const aiSummaryCursor = document.querySelector('.ai-summary-cursor');
+        if (aiSummaryText && aiSummaryCursor) {
+          let text = aiSummaryText.getAttribute('data-text');
+          if (text) {
+            const textarea = document.createElement('textarea');
+            textarea.innerHTML = text;
+            text = textarea.value;
+            aiSummaryText.textContent = '';
+            aiSummaryCursor.classList.add('typing');
+            let index = 0;
+            const speed = 30;
+            function typeWriter() {
+              if (index < text.length) {
+                aiSummaryText.textContent += text.charAt(index);
+                index++;
+                setTimeout(typeWriter, speed);
+              } else {
+                aiSummaryCursor.classList.remove('typing');
+              }
+            }
+            setTimeout(typeWriter, 500);
+          }
+        }
+
+
+
+        if (typeof renderMathInElement !== 'undefined') {
+          renderMathInElement(document.body, {
+            delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+          });
+        }
+      });
+    </script>
+
+    </div>
+  </body>
+</html>

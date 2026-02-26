@@ -1,0 +1,17 @@
+<div class="articles-grid">
+  <% posts.forEach(function(post) { %>
+    <article class="article-card">
+      <a href="<%= post.link %>" class="card-link">
+        <div class="card-image">
+          <img src="<% if (post.feature) { %><%= post.feature %><% } else { %><%= site.customConfig.featureImage %><%} %>" alt="<%= post.title %>">
+        </div>
+        <div class="card-content">
+          <time datetime="<%= post.dateFormat %>"><%= post.dateFormat %></time>
+          <div class="card-title-wrapper">
+            <h4 class="card-title"><%= post.title %></h4>
+          </div>
+        </div>
+      </a>
+    </article>
+  <% }); %>
+</div>

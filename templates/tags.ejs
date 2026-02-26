@@ -1,0 +1,54 @@
+<html>
+  <head>
+  <%- include('./includes/head', { siteTitle: `标签 | ${themeConfig.siteName}` }) %>
+  </head>
+  <body>
+    <!-- start: #wrapper -->
+    <div class="wrapper">
+      
+      <%- include('./includes/header') %>
+
+      <main id="tags-page" class="main">
+        <div class="grid-container">
+          <div class="tags-wrapper">
+            <h1 class="tags-title">标签</h1>
+            <div class="tags-list">
+              <% if (site.tags && site.tags.length > 0) { %>
+                <% site.tags.forEach(function(tag, tagIndex) { %>
+                  <% var postCount = tag.posts ? tag.posts.length : (tag.count || 0); %>
+                  <a href="<%= tag.link %>" class="tag-item" data-count="<%= postCount %>">
+                    <span class="tag-hash">#</span>
+                    <span class="tag-name"><%= tag.name %></span>
+                    <span class="tag-count"><%= postCount %></span>
+                  </a>
+                <% }); %>
+              <% } else { %>
+                <p class="tags-empty">暂无标签</p>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </main>
+
+    <%- include('./includes/footer') %>
+    </div>
+    <!-- end: #wrapper -->
+    
+    <script>
+      // KaTeX 数学公式渲染
+      document.addEventListener('DOMContentLoaded', function() {
+        if (typeof renderMathInElement !== 'undefined') {
+          renderMathInElement(document.body, {
+            delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
