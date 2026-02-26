@@ -11,7 +11,7 @@
 <% } %>
 <style>
   /* 确保原来的fa类使用icomoon字体 */
-  .fa.fa-search, .fa.fa-arrow-up, .fa.fa-bars, .fa.fa-chevron-left, .fa.fa-chevron-right, .fa.fa-comment, .fa.fa-random, .fa.fa-th {
+  .fa.fa-arrow-up, .fa.fa-bars, .fa.fa-chevron-left, .fa.fa-chevron-right, .fa.fa-comment, .fa.fa-random, .fa.fa-th {
     font-family: 'FontAwesome' !important;
   }
 </style>
@@ -124,64 +124,6 @@
         console.log('Control panel clicked');
       });
     }
-    
-    // 移动端点击搜索时自动关闭菜单
-    var mobileSearchLinks = document.querySelectorAll('.mobile-menu a[href="#search-lightbox"]');
-    mobileSearchLinks.forEach(function(link) {
-      link.addEventListener('click', function() {
-        if (mobileMenu) {
-          mobileMenu.classList.remove('active');
-        }
-      });
-    });
-    
-    // 搜索弹窗功能
-    var searchLightbox = document.getElementById('search-lightbox');
-    var searchBtns = document.querySelectorAll('a[href="#search-lightbox"]');
-    
-    // 打开搜索弹窗
-    searchBtns.forEach(function(btn) {
-      btn.addEventListener('click', function(e) {
-        e.preventDefault();
-        if (searchLightbox) {
-          searchLightbox.classList.add('search-open');
-          var searchInput = searchLightbox.querySelector('#s');
-          if (searchInput) {
-            setTimeout(function() {
-              searchInput.focus();
-            }, 100);
-          }
-        }
-      });
-    });
-    
-    // 点击背景关闭搜索弹窗
-    if (searchLightbox) {
-      searchLightbox.addEventListener('click', function(e) {
-        if (e.target === searchLightbox) {
-          searchLightbox.classList.remove('search-open');
-        }
-      });
-      
-      // ESC键关闭搜索弹窗
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && searchLightbox.classList.contains('search-open')) {
-          searchLightbox.classList.remove('search-open');
-        }
-      });
-      
-      // 搜索表单提交
-      var searchForm = document.getElementById('gridea-search-form');
-      if (searchForm) {
-        searchForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-          var searchInput = searchForm.querySelector('#s');
-          if (searchInput && searchInput.value.trim()) {
-            window.location.href = '/search/index.html?q=' + encodeURIComponent(searchInput.value.trim());
-          }
-        });
-      }
-    }});
   });
 
   // 加载动画管理
