@@ -2162,11 +2162,31 @@ select {
   border-radius: 50%;
   object-fit: cover;
   border: 4px solid #f0f0f2;
+  animation-duration: 0.3s;
+  animation-name: loadingAction;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+@keyframes loadingAction {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.4;
+  }
 }
 
 .loading-online-indicator {
   position: absolute;
-  bottom: 0;
+  bottom: 8px;
+  right: 8px;
+  width: 14px;
+  height: 14px;
+  background: #6bdf8f;
+  border-radius: 50%;
+  transform: translate(50%, 50%);
+  box-shadow: 0 0 0 3px #fff;
 }
 
 .wpcf7 .wpcf7-response-output.wpcf7-mail-sent-ok {
@@ -10759,13 +10779,14 @@ photos .photo:last-child{margin-right:0px;}
   flex-wrap: wrap;
   gap: 20px;
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.85);
+  color: #fff;
 }
 
 .post-header-meta .meta-item {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  color: #fff;
 }
 
 .post-header-meta .meta-item i,
@@ -10778,26 +10799,36 @@ photos .photo:last-child{margin-right:0px;}
 /* 响应式 */
 @media (max-width: 768px) {
   .post-header {
-    width: calc(100% - 40px) !important;
-    min-height: 240px !important;
-    padding: 30px 20px !important;
+    width: 85% !important;
+    min-height: 200px !important;
+    padding: 40px 25px !important;
     margin: 55px auto 0 !important;
     border-radius: 20px !important;
     position: relative !important;
   }
   
+  .post-header-content {
+    text-align: center !important;
+  }
+  
   .post-header-title {
-    font-size: 26px;
+    font-size: 24px;
+    margin-bottom: 16px;
   }
   
   .post-header-meta {
     gap: 12px;
     font-size: 13px;
+    justify-content: center;
   }
   
   .post-tag {
     font-size: 12px;
     padding: 3px 10px;
+  }
+  
+  .post-header-tags {
+    justify-content: center;
   }
 }
 
